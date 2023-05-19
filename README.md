@@ -9,8 +9,6 @@ The Glossary Tooltip is a custom Drupal 8/9 module for automatically creating to
 2. [Requirements](#requirements)
 3. [Installation](#installation)
 4. [Configuration](#configuration)
-5. [Support](#support)
-6. [Contribution](#contribution)
 
 ## Features <a name="features"></a>
 
