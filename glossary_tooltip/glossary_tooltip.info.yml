@@ -1,0 +1,4 @@
+name: Glossary Tooltip
+description: Highlights glossary terms in node content with tooltips.
+type: module
+core_version_requirement: ^8 || ^9

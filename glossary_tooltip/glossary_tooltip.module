@@ -1,0 +1,100 @@
+<?php
+
+use Drupal\node\NodeInterface;
+
+/**
+ * Implements hook_node_presave().
+ *
+ * This function is triggered before a node is saved. We use it to find all the glossary
+ * terms present in all text fields of the node and cache them for later use.
+ */
+function glossary_tooltip_node_presave(NodeInterface $node) {
+  // Load all terms in the 'glossary' vocabulary.
+  $terms = \Drupal::entityTypeManager()->getStorage('taxonomy_term')->loadTree('glossary');
+
+  // Iterate over all fields of the node.
+  foreach ($node->getFields() as $field) {
+    // If the field is a text field, process it.
+    if ($field->getFieldDefinition()->getType() == 'text') {
+      // Convert the field value to lowercase.
+      $field_value = $field->value;
+      $field_value_lowercase = strtolower($field_value);
+
+      $found_terms = [];
+      // Iterate over all glossary terms.
+      foreach ($terms as $term) {
+        // Convert the term to lowercase.
+        $term_lowercase = strtolower($term->name);
+        // If the term is present in the field value, add it to the found terms.
+        if (strpos($field_value_lowercase, $term_lowercase) !== FALSE) {
+          $found_terms[$term->name] = $term->description;
+        }
+      }
+
+      // Cache the found terms for this field.
+      $cid = 'glossary_tooltip:node_terms:' . $node->id() . ':' . $field->getName();
+      \Drupal::cache()->set($cid, $found_terms);
+    }
+  }
+}
+
+/**
+ * Implements hook_node_view().
+ *
+ * This function is triggered when a node is viewed. We use it to replace all instances of
+ * the cached glossary terms in all text fields with a span that includes a tooltip.
+ */
+function glossary_tooltip_node_view(array &$build, NodeInterface $node, $display, $view_mode) {
+  // Iterate over all fields of the node.
+  foreach ($node->getFields() as $field) {
+    // If the field is a text field, process it.
+    if ($field->getFieldDefinition()->getType() == 'text') {
+      $cid = 'glossary_tooltip:node_terms:' . $node->id() . ':' . $field->getName();
+
+      // If we have cached terms for this field, replace them in the field text.
+      if ($cache = \Drupal::cache()->get($cid)) {
+        $found_terms = $cache->data;
+
+        foreach ($found_terms as $term => $description) {
+          $pattern = '/\b' . preg_quote($term, '/') . '\b/i';
+          $replacement = '<span title="' . $description . '">' . $term . '</span>';
+          $build[$field->getName()][0]['#text'] = preg_replace($pattern, $replacement, $build[$field->getName()][0]['#text']);
+        }
+      }
+    }
+  }
+}
+
+/**
+ * Implements hook_node_update().
+ *
+ * This function is triggered when a node is updated. We use it to invalidate the cached
+ * terms for all text fields of the node.
+ */
+function glossary_tooltip_node_update(NodeInterface $node) {
+  // Iterate over all fields of the node.
+  foreach ($node->getFields() as $field) {
+    // If the field is a text field, invalidate its cache.
+    if ($field->getFieldDefinition()->getType() == 'text') {
+      $cid = 'glossary_tooltip:node_terms:' . $node->id() . ':' . $field->getName();
+      \Drupal::cache()->invalidate($cid);
+    }
+  }
+}
+
+/**
+ * Implements hook_node_delete().
+ *
+ * This function is triggered when a node is deleted. We use it to delete the cached
+ * terms for all text fields of the node.
+ */
+function glossary_tooltip_node_delete(NodeInterface $node) {
+  // Iterate over all fields of the node.
+  foreach ($node->getFields() as $field) {
+    // If the field is a text field, delete its cache.
+    if ($field->getFieldDefinition()->getType() == 'text') {
+      $cid = 'glossary_tooltip:node_terms:' . $node->id() . ':' . $field->getName();
+      \Drupal::cache()->delete($cid);
+    }
+  }
+}
