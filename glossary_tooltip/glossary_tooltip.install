@@ -2,7 +2,7 @@
 
 /**
  * @file
- * Install, update and uninstall functions for the glossary_tooltip module.
+ * Install, update, and uninstall functions for the glossary_tooltip module.
  */
 
 use Drupal\taxonomy\Entity\Term;
@@ -15,19 +15,17 @@ use Drupal\taxonomy\Entity\Vocabulary;
  */
 function glossary_tooltip_install() {
   // Define an array of terms to be created.
-  // These terms contain a 'name' and a 'description'. Some descriptions are
-  // deliberately over 100 characters long.
   $terms = [
-    ['name' => 'Artificial Intelligence', 'description' => 'The theory and development of computer systems able to perform tasks that normally require human intelligence, such as visual perception, speech recognition, decision-making, and translation between languages.'],
-    ['name' => 'Blockchain', 'description' => 'A system in which a record of transactions made in bitcoin or another cryptocurrency are maintained across several computers that are linked in a peer-to-peer network.'],
-    ['name' => 'Cloud Computing', 'description' => 'The delivery of computing services over the internet rather than having local servers or personal devices handle applications.'],
-    ['name' => 'DevOps', 'description' => 'A set of practices that combines software development (Dev) and IT operations (Ops) which aims to shorten the systems development life cycle and provide continuous delivery with high software quality.'],
-    ['name' => 'Encryption', 'description' => 'The method by which information is converted into secret code that hides the information\'s true meaning.'],
-    ['name' => 'Firewall', 'description' => 'A network security system that monitors and controls incoming and outgoing network traffic based on predetermined security rules.'],
-    ['name' => 'Git', 'description' => 'An open-source distributed version control system designed to handle everything from small to very large projects with speed and efficiency.'],
-    ['name' => 'HTML', 'description' => 'Hypertext Markup Language, the standard markup language for documents designed to be displayed in a web browser.'],
-    ['name' => 'Internet of Things', 'description' => 'The interconnection via the Internet of computing devices embedded in everyday objects, enabling them to send and receive data.'],
-    ['name' => 'JavaScript', 'description' => 'A high-level, just-in-time compiled, object-oriented programming language that conforms to the ECMAScript specification.'],
+    ['name' => 'Persian Cat', 'description' => 'A long-haired breed of cat known for its distinctive appearance, round face, and luxurious coat.'],
+    ['name' => 'Siamese Cat', 'description' => 'A breed of cat originating from Thailand, known for its striking blue almond-shaped eyes and color-pointed coat.'],
+    ['name' => 'Maine Coon', 'description' => 'A large domestic cat breed characterized by its tufted ears, bushy tail, and robust build.'],
+    ['name' => 'Bengal Cat', 'description' => 'A breed of cat with a distinctive spotted or marbled coat that resembles that of a leopard.'],
+    ['name' => 'Sphynx Cat', 'description' => 'A hairless breed of cat known for its wrinkled skin, large ears, and energetic personality.'],
+    ['name' => 'Ragdoll Cat', 'description' => 'A large, semi-longhaired cat breed known for its affectionate nature, silky fur, and tendency to go limp when picked up.'],
+    ['name' => 'Scottish Fold', 'description' => 'A breed of cat with unique folded ears, resulting from a genetic mutation, and a round face.'],
+    ['name' => 'British Shorthair', 'description' => 'A medium to large-sized breed with a dense coat, round face, and stocky build.'],
+    ['name' => 'Russian Blue', 'description' => 'A shorthaired cat breed with a bluish-gray coat, green eyes, and an elegant and athletic appearance.'],
+    ['name' => 'Siberian Cat', 'description' => 'A semi-longhaired breed of cat known for its thick, water-resistant coat and hypoallergenic qualities.'],
   ];
 
   // Check if the glossary vocabulary exists, if not create it.
@@ -35,7 +33,7 @@ function glossary_tooltip_install() {
   if (!$vocabulary) {
     // Create a new vocabulary called 'glossary'.
     $vocabulary = Vocabulary::create([
-      'vid' => 'Glossary',
+      'vid' => 'glossary',
       'description' => t('Glossary terms used for the Glossary Tooltip module.'),
       'name' => 'Glossary',
     ]);
@@ -52,7 +50,7 @@ function glossary_tooltip_install() {
         'value' => $term_data['description'],
         'format' => 'basic_html',
       ],
-      'vid' => 'Glossary',
+      'vid' => 'glossary',
     ]);
     // Save the newly created term.
     $term->save();
